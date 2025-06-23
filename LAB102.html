@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="ctrl">
+
+<h3>Job Registration</h3>
+
+<form ng-submit="register($event)">
+  Name: <input ng-model="name" required><br><br>
+  Email: <input ng-model="email" required><br><br>
+  Phone: <input ng-model="phone" required><br><br>
+  Position:
+  <select ng-model="position" required>
+    <option value="" disabled selected>Select Position</option>
+    <option>Frontend</option>
+    <option>Backend</option>
+  </select><br><br>
+  <button type="submit">Register</button>
+</form>
+
+<div ng-if="show">
+  <h4>Registered!</h4>
+  Name: {{name}}<br>
+  Email: {{email}}<br>
+  Phone: {{phone}}<br>
+  Position: {{position}}
+</div>
+
+<script>
+  angular.module("app", []).controller("ctrl", function($scope) {
+    $scope.show = false;
+    $scope.register = function(e) {
+      e.preventDefault();  // Prevent page reload
+      $scope.show = true;
+    };
+  });
+</script>
+
+</body>
+</html>

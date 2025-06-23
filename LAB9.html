@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html ng-app="cssEventApp">
+<head>
+  <meta charset="UTF-8">
+  <title>AngularJS CSS & Events Form</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    input { margin: 5px 0; }
+    .input-valid { border: 2px solid green; }
+    .input-invalid { border: 2px solid red; }
+    .message { font-weight: bold; margin-top: 10px; }
+    .highlight { background-color: yellow; }
+  </style>
+</head>
+<body ng-controller="FormController">
+  <h2>AngularJS Form</h2>
+  <form name="userform" novalidate>
+    <label>Name:</label>
+    <input type="text" ng-model="user.name"
+           ng-class="user.name ? 'input-valid' : 'input-invalid'" required>
+    <label>Email:</label>
+    <input type="email" ng-model="user.email"
+           ng-class="user.email ? 'input-valid' : 'input-invalid'" required>
+    <button type="button" ng-click="submitForm()">Submit</button>
+  </form>
+  <div class="message" ng-if="submitted" ng-class="{ highlight: isHighlighted }">
+    Hello {{ user.name }}, your email: {{ user.email }}
+  </div>
+  <button ng-click="toggleHighlight()">Toggle Highlight</button>
+  <script>
+    angular.module('cssEventApp', [])
+      .controller('FormController', function($scope) {
+        $scope.user = {};
+        $scope.submitted = false;
+        $scope.isHighlighted = false;
+        $scope.submitForm = function() {
+          $scope.submitted = $scope.user.name && $scope.user.email;
+          if (!$scope.submitted) {
+            alert("Please fill in all fields!");
+          }
+        };
+        $scope.toggleHighlight = function() {
+          $scope.isHighlighted = !$scope.isHighlighted;
+        };
+      });
+  </script>
+</body>
+</html>
