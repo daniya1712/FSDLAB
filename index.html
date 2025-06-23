@@ -1,43 +1,54 @@
 <!DOCTYPE html>
-<html ng-app="employeeApp">
+<html ng-app="studentApp">
 <head>
   <meta charset="UTF-8">
-  <title>Employee List</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-  <script src="app.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f4f4f4;
-    }
-  </style>
+  <title>Student Management</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
 </head>
-<body ng-controller="EmployeeController">
-  <h2>Employee List</h2>
-  <table>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Position</th>
-    </tr>
-    <tr ng-repeat="emp in employees">
-      <td>{{ emp.id }}</td>
-      <td>{{ emp.name }}</td>
-      <td>{{ emp.position }}</td>
-    </tr>
-  </table>
+<body ng-controller="StudentController">
+
+  <h2>Add Student</h2>
+  <form ng-submit="addStudent()">
+    <input type="text" ng-model="newStudent.name" placeholder="Name" required />
+    <input type="number" ng-model="newStudent.age" placeholder="Age" required />
+    <button type="submit">Add</button>
+  </form>
+
+  <h2>Student List</h2>
+  <ul>
+    <li ng-repeat="student in students">
+      {{ student.name }} (Age: {{ student.age }})
+    </li>
+  </ul>
+
+  <script>
+    const app = angular.module('studentApp', []);
+
+    app.controller('StudentController', function($scope, $http) {
+      const API = 'http://localhost:3000/students';
+      $scope.students = [];
+      $scope.newStudent = {};
+
+      // Load students on page load
+      const loadStudents = () => {
+        $http.get(API).then(response => {
+          $scope.students = response.data;
+        });
+      };
+
+      // Add a student
+      $scope.addStudent = () => {
+        if ($scope.newStudent.name && $scope.newStudent.age) {
+          $http.post(API, $scope.newStudent).then(() => {
+            $scope.newStudent = {};
+            loadStudents();
+          });
+        }
+      };
+
+      loadStudents(); // initial call
+    });
+  </script>
+
 </body>
 </html>
