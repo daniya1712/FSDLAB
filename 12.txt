@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html ng-app="studentApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Management</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+</head>
+<body ng-controller="StudentController">
+
+  <h2>Add Student</h2>
+  <form ng-submit="addStudent()">
+    <input type="text" ng-model="newStudent.name" placeholder="Name" required />
+    <input type="number" ng-model="newStudent.age" placeholder="Age" required />
+    <button type="submit">Add</button>
+  </form>
+
+  <h2>Student List</h2>
+  <ul>
+    <li ng-repeat="student in students">
+      {{ student.name }} (Age: {{ student.age }})
+    </li>
+  </ul>
+
+  <script>
+    const app = angular.module('studentApp', []);
+
+    app.controller('StudentController', function($scope, $http) {
+      const API = 'http://localhost:3000/students';
+      $scope.students = [];
+      $scope.newStudent = {};
+
+      // Load students on page load
+      const loadStudents = () => {
+        $http.get(API).then(response => {
+          $scope.students = response.data;
+        });
+      };
+
+      // Add a student
+      $scope.addStudent = () => {
+        if ($scope.newStudent.name && $scope.newStudent.age) {
+          $http.post(API, $scope.newStudent).then(() => {
+            $scope.newStudent = {};
+            loadStudents();
+          });
+        }
+      };
+
+      loadStudents(); // initial call
+    });
+  </script>
+
+</body>
+</html>
+
+
+
+server.js
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+
+const app = express();
+const PORT = 3000;
+
+app.use(cors());
+app.use(bodyParser.json());
+
+let students = [];
+let id = 1;
+
+// Add a new student
+app.post('/students', (req, res) => {
+  const student = { id: id++, name: req.body.name, age: req.body.age };
+  students.push(student);
+  res.status(201).json(student);
+});
+
+// Get all students
+app.get('/students', (req, res) => {
+  res.json(students);
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
+
+
+
+
+
+exe:
+npm install express body-parser cors
+node server.js
